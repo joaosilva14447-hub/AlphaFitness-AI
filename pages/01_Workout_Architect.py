@@ -106,7 +106,7 @@ with col2:
     
     1. **Rest Periods:** 90s for compounds, 60s for isolation.
     2. **Progressive Overload:** Focus on adding 1kg or 1 rep every session.
-    3. **Tempo:** 3-0-1-0 (3s eccentric phase).
+    3. **Execution:** 3-0-1-0 (3s eccentric phase).
     """)
     
     if st.button("Verify Form with AI"):
