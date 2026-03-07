@@ -114,9 +114,9 @@ with col2:
 
 # --- SUMMARY FOR CLIENT (English Section) ---
 st.divider()
-st.markdown("### ✦ Execution Summary (For Client)")
+st.markdown("### ✦ Execution Summary")
 st.code(f"""
-CLIENT REPORT:
+REPORT:
 - Training Split: {split}
 - Goal: Hypertrophy & Neuromuscular Adaptation
 - Intensity: RPE 8-9 based on {level} status.
