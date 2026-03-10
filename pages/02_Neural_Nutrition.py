@@ -1,96 +1,117 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 
-# 1. Configuração de Elite
+# 1. Configuração de Autoridade
 st.set_page_config(page_title="Neural Nutrition | Alpha Fitness", layout="wide")
 
 AQUA, BLUE = "#00FBFF", "#3D5AFE"
 
-# Recuperação de Dados da Home
+# Recuperação Segura de Dados
 weight = st.session_state.get('user_weight', 80)
 goal = st.session_state.get('user_goal', 'Maintenance')
 
-st.markdown(f"<h1>✦ 𝓝𝓮𝓾𝓻𝓪𝓵 𝓝𝓾𝓽𝓻𝓲𝓽𝓲𝓸𝓷 𝓐𝓻𝓬𝓱𝓲𝓽𝓮𝓬𝓽 ✦</h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color: {BLUE};'>✦ 𝓝𝓮𝓾𝓻𝓪𝓵 𝓝𝓾𝓽𝓻𝓲𝓽𝓲𝓸𝓷 𝓐𝓻𝓬𝓱𝓲𝓽𝓮𝓬𝓽 ✦</h1>", unsafe_allow_html=True)
 st.write("---")
 
-# 2. Motor de Hidratação Alpha
-# Base: 35ml por kg + Ajuste por fase
-water_base = weight * 35 / 1000 
-water_adjustment = 0.5 if goal in ["Cutting", "Bulking"] else 0.0
-total_water = water_base + water_adjustment
+# 2. Hidratação Estratégica (Cálculo em Tempo Real)
+water_target = (weight * 35 / 1000) + (0.5 if goal != "Maintenance" else 0.0)
 
 c1, c2, c3 = st.columns(3)
-c1.metric("ESTRATÉGIA ATUAL", goal.upper())
-c2.metric("ALVO DE HIDRATAÇÃO", f"{total_water:.1f} Litros/Dia")
-c3.info(f"💡 Dica Alpha: Beber 500ml de água mal acorde para ativar o metabolismo.")
+c1.metric("ESTRATÉGIA", goal.upper())
+c2.metric("HIDRATAÇÃO", f"{water_target:.1f} Litros")
+c3.info(f"💡 Dica: Beber 500ml de água fria ao acordar para termogênese.")
 
-# 3. Lógica de Nutrientes (Cálculos de Engenharia)
-base_cals = 2500 if goal == "Maintenance" else 2800 if goal == "Bulking" else 2100
-prot_total = weight * 2.2
-fat_total = weight * 0.8
-carb_total = (base_cals - (prot_total * 4) - (fat_total * 9)) / 4
+# 3. Engenharia de Macros (Cálculos de Precisão)
+base_cals = 2500 if goal == "Maintenance" else 2800 if goal == "Bulking" else 2000
+p_total = weight * 2.2
+f_total = weight * 0.8
+c_total = (base_cals - (p_total * 4) - (f_total * 9)) / 4
 
 with st.sidebar:
     st.header("✦ Protocolo")
-    num_meals = st.slider("Número de Refeições", 3, 6, 4)
+    num_meals = st.slider("Refeições", 3, 6, 4)
 
-# 4. Base de Dados de Densidade (Macros por 100g de alimento cozinhado)
-# [Nome, Prot, Carb, Fat]
-food_data = {
-    "Proteins": {"Frango Grelhado": 31, "Carne de Vaca (Patinho)": 28, "Ovos (3 unid)": 18, "Peixe Branco": 24, "Whey Protein": 25},
-    "Carbs": {"Arroz Basmati": 28, "Batata Doce": 20, "Aveia": 60, "Massa Integral": 25, "Fruta Variada": 15},
-    "Fats": {"Abacate": 15, "Azeite de Oliva (10ml)": 10, "Frutos Secos": 50, "Manteiga de Amendoim": 50}
+p_meal, c_meal, f_meal = p_total/num_meals, c_total/num_meals, f_total/num_meals
+
+# 4. Database de Densidade Alpha
+db = {
+    "P": {"Frango": 31, "Vaca (Patinho)": 28, "Peixe Branco": 24, "Whey": 80, "Ovos (unid)": 6, "Claras (ml)": 11, "Iogurte Grego": 10},
+    "C": {"Arroz": 28, "Batata Doce": 20, "Aveia": 60, "Massa Integral": 25, "Fruta": 15, "Pão Integral": 45, "Granola": 65},
+    "F": {"Azeite (ml)": 100, "Abacate": 15, "Manteiga Amendoim": 50, "Frutos Secos": 50}
 }
 
-# 5. Meal Architect (Geração de Plano Detalhado)
-st.subheader("✦ Plano de Refeições Detalhado")
+# 5. Cardápio Gourmet Harmonizado
+meal_options = {
+    "DESJEJUM": [
+        {"name": "Opção A: Omelete Alpha", "p": "Ovos (unid)", "c": "Pão Integral", "f": "Abacate"},
+        {"name": "Opção B: Pancakes Proteicas", "p": "Claras (ml)", "c": "Aveia", "f": "Manteiga Amendoim"},
+        {"name": "Opção C: Power Yogurt Bowl", "p": "Iogurte Grego", "c": "Granola", "f": "Frutos Secos"}
+    ],
+    "ALMOÇO/JANTAR": [
+        {"name": "Opção A: Classic Gains", "p": "Frango", "c": "Arroz", "f": "Azeite (ml)"},
+        {"name": "Opção B: Red Performance", "p": "Vaca (Patinho)", "c": "Batata Doce", "f": "Azeite (ml)"},
+        {"name": "Opção C: Lean Marine", "p": "Peixe Branco", "c": "Massa Integral", "f": "Azeite (ml)"}
+    ],
+    "SNACK": [
+        {"name": "Opção A: Alpha Shake", "p": "Whey", "c": "Fruta", "f": "Frutos Secos"},
+        {"name": "Opção B: Toast Proteico", "p": "Frango", "c": "Pão Integral", "f": "Abacate"},
+        {"name": "Opção C: Mix Energético", "p": "Iogurte Grego", "c": "Aveia", "f": "Manteiga Amendoim"}
+    ]
+}
 
-# Divisão por refeição
-p_meal, c_meal, f_meal = prot_total/num_meals, carb_total/num_meals, fat_total/num_meals
+# 6. Renderização de Refeições com Sistema de Seleção
+st.subheader("✦ Gestão de Janelas de Alimentação")
 
-# Estrutura de Refeições Dinâmicas
-meal_templates = [
-    {"title": "Pequeno-Almoço (Despertar Metabólico)", "p_source": "Ovos (3 unid)", "c_source": "Aveia"},
-    {"title": "Almoço (Performance Lunch)", "p_source": "Frango Grelhado", "c_source": "Arroz Basmati"},
-    {"title": "Lanche (Nutrient Timing)", "p_source": "Whey Protein", "c_source": "Fruta Variada"},
-    {"title": "Jantar (Recovery Dinner)", "p_source": "Peixe Branco", "c_source": "Batata Doce"},
-    {"title": "Ceia / Snack Extra", "p_source": "Carne de Vaca (Patinho)", "c_source": "Massa Integral"}
-]
+user_selections = []
 
-meal_cols = st.columns(2)
+cols = st.columns(2)
 for i in range(num_meals):
-    template = meal_templates[i % len(meal_templates)]
-    with meal_cols[i % 2]:
-        with st.expander(f"REFEIÇÃO {i+1} - {template['title']}", expanded=True):
-            # Cálculo de quantidades em gramas
-            p_qty = (p_meal / food_data["Proteins"][template['p_source']]) * 100
-            c_qty = (c_meal / food_data["Carbs"][template['c_source']]) * 100
+    # Lógica de tipo de refeição
+    if i == 0: m_type = "DESJEJUM"
+    elif i == num_meals - 1 or i == 1: m_type = "ALMOÇO/JANTAR"
+    else: m_type = "SNACK"
+    
+    with cols[i % 2]:
+        with st.container(border=True):
+            st.markdown(f"#### REFEIÇÃO {i+1} ({m_type})")
             
+            # Seleção de Opção (Key única baseada no index para não dar erro)
+            choice = st.selectbox("Escolha sua opção:", 
+                                [opt["name"] for opt in meal_options[m_type]], 
+                                key=f"meal_{i}")
+            
+            # Encontrar dados da opção escolhida
+            selected_opt = next(opt for opt in meal_options[m_type] if opt["name"] == choice)
+            
+            # Cálculos de Quantidade
+            if "unid" in selected_opt['p']: p_val = f"{max(1, p_meal / db['P'][selected_opt['p']]):.0f} unid"
+            else: p_val = f"{(p_meal / db['P'][selected_opt['p']]) * 100:.0f}g/ml"
+            
+            c_val = f"{(c_meal / db['C'][selected_opt['c']]) * 100:.0f}g"
+            f_val = f"{f_meal if 'ml' in selected_opt['f'] else (f_meal / db['F'][selected_opt['f']]) * 100:.0f}{'ml' if 'ml' in selected_opt['f'] else 'g'}"
+            
+            # Display dos Ingredientes
             st.markdown(f"""
-            **Lista de Compras (Quantidades Cozinhadas):**
-            * 🟢 **{p_qty:.0f}g** de {template['p_source']}
-            * 🔵 **{c_qty:.0f}g** de {template['c_source']}
-            * ⚪ **{f_meal:.0f}g** de Gordura (ex: 1 colher de Azeite ou Abacate)
-            
-            **Macros da Refeição:**
-            `P: {p_meal:.1f}g | C: {c_meal:.1f}g | F: {f_meal:.1f}g`
+            - 🟢 **{p_val}** de {selected_opt['p']}
+            - 🔵 **{c_val}** de {selected_opt['c']}
+            - ⚪ **{f_val}** de {selected_opt['f']}
             """)
+            st.caption(f"Target: {p_meal:.0f}P | {c_meal:.0f}C | {f_meal:.0f}F")
 
-# 6. Gráfico de Alvos Totais
+# 7. Gráfico de Alvos Totais
+st.divider()
+st.subheader("✦ Macronutrient Target Distribution")
 fig = go.Figure(data=[
-    go.Bar(name='Proteína', x=['Total'], y=[prot_total], marker_color=AQUA),
-    go.Bar(name='Carbos', x=['Total'], y=[carb_total], marker_color=BLUE),
-    go.Bar(name='Gorduras', x=['Total'], y=[fat_total], marker_color='#FFFFFF')
+    go.Pie(labels=['Proteína', 'Carbos', 'Gorduras'], 
+           values=[p_total*4, c_total*4, f_total*9],
+           hole=.5,
+           marker_colors=[AQUA, BLUE, "#FFFFFF"])
 ])
-fig.update_layout(barmode='group', template="plotly_dark", height=300, paper_bgcolor="#0F0F0F", plot_bgcolor="#0F0F0F")
+fig.update_layout(template="plotly_dark", height=400, paper_bgcolor="#0F0F0F")
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
-st.markdown("### ✦ ALPHA MISSION SUMMARY")
-st.code(f"""
-PROTOCOLO: {goal.upper()}
-HIDRATAÇÃO: {total_water:.1f}L / DIA
-FREQUÊNCIA: {num_meals} JANELAS DE ALIMENTAÇÃO
-STATUS: MOTOR NUTRICIONAL EM EXECUÇÃO
-""", language="text")
+st.markdown("### ✦ MISSION EXECUTION PROTOCOL")
+st.code(f"USER: {weight}KG | GOAL: {goal} | STATUS: OPTIMIZED", language="text")
