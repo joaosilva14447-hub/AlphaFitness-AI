@@ -71,9 +71,10 @@ fig.update_layout(title_text="✦ Daily Macro Distribution (Grams)", template="p
 st.plotly_chart(fig, use_container_width=True)
 
 # Resumo para o Cliente (Summary Section)
-st.markdown(f"### ✦ Execution Summary (For Client)")
+st.markdown(f"### ✦ Execution Summary")
 st.info(f"""
 **Target:** {target_cal:.0f} Calories/Day. 
 To reach your goal of **{goal}**, you must prioritize **{values[0]:.0f}g of Protein** to maintain lean mass and optimize recovery. 
 Your metabolic baseline is set. Ready for Phase 2: Workout Architecture.
+
 """)
