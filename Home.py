@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.graph_objects as go
 
 # 1. Configuração Master de Elite
 st.set_page_config(page_title="Alpha Fitness AI", layout="wide", page_icon="⚡")
@@ -22,10 +23,9 @@ st.markdown(f"""
 st.markdown(f"<h1>✦ 𝓐𝓛𝓟𝓗𝓐 𝓕𝓘𝓣𝓝𝓔𝓢𝓢: 𝓝𝓮𝓾𝓻𝓪𝓵 𝓒𝓸𝓷𝓽𝓻𝓸𝓵 ✦</h1>", unsafe_allow_html=True)
 st.write("---")
 
-# 2. Captura de Dados Biométricos (Layout Grelha 3x2 igual à Imagem)
+# 2. Captura de Dados Biométricos (Grelha 3x2)
 st.subheader("✦ Biometric Data Ingestion")
 
-# Linha 1 de Inputs
 r1_c1, r1_c2, r1_c3 = st.columns(3)
 with r1_c1:
     weight = st.number_input("Peso Atual (kg)", min_value=40.0, max_value=200.0, value=80.0, step=0.1)
@@ -34,7 +34,6 @@ with r1_c2:
 with r1_c3:
     age = st.number_input("Idade", min_value=15, max_value=90, value=25)
 
-# Linha 2 de Inputs
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     gender = st.selectbox("Sexo Biológico", ["Masculino", "Feminino"])
@@ -43,12 +42,11 @@ with r2_c2:
 with r2_c3:
     goal = st.selectbox("Objetivo Estratégico", ["Maintenance", "Bulking", "Cutting"])
 
-# 3. Sincronização de Dados (Session State Protocol)
+# 3. Sincronização de Dados para as outras páginas
 st.session_state['user_weight'] = weight
 st.session_state['user_goal'] = goal
-st.session_state['user_gender'] = gender
 
-# 4. Motor de Cálculo Metabólico
+# 4. Motor de Cálculo Metabólico e Macros
 if gender == "Masculino":
     bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
 else:
@@ -61,19 +59,52 @@ if goal == "Bulking": target_cals = tdee + 400
 elif goal == "Cutting": target_cals = tdee - 500
 else: target_cals = tdee
 
-# 5. Dashboard de Performance (Strategic Forecast)
+# Cálculo de Macros (Os "Outros Fatores")
+prot = weight * 2.2
+fats = weight * 0.8
+carbs = (target_cals - (prot * 4) - (fats * 9)) / 4
+
+# 5. Dashboard de Performance (Métricas e Gráfico)
 st.write("---")
-st.subheader("✦ Strategic Forecast")
+st.subheader("✦ Strategic Forecast & Macro Partitioning")
 
 m1, m2, m3 = st.columns(3)
-m1.metric("BMR (Metabolismo Base)", f"{bmr:.0f} kcal")
-m2.metric("TDEE (Gasto Diário)", f"{tdee:.0f} kcal")
-m3.metric("TARGET DIÁRIO", f"{target_cals:.0f} kcal", delta=f"{target_cals - tdee:.0f} vs TDEE")
+m1.metric("TDEE (Manutenção)", f"{tdee:.0f} kcal")
+m2.metric("TARGET DIÁRIO", f"{target_cals:.0f} kcal", delta=f"{target_cals - tdee:.0f}")
+m3.metric("ÁGUA MÍNIMA", f"{(weight * 35) / 1000:.1f} L")
 
-# 6. Rodapé Técnico
+# Layout de Gráfico e Detalhes de Macros
+col_graph, col_macros = st.columns([1.5, 1])
+
+with col_graph:
+    # Gráfico de Rosca (Donut Chart)
+    fig = go.Figure(data=[go.Pie(
+        labels=['Proteína', 'Carbo', 'Gordura'],
+        values=[prot*4, carbs*4, fats*9],
+        hole=.6,
+        marker_colors=[AQUA, BLUE, "#FFFFFF"],
+        textinfo='label+percent'
+    )])
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+        height=350,
+        margin=dict(t=0, b=0, l=0, r=0)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+with col_macros:
+    st.write("### ✦ Macronutrient Targets")
+    st.markdown(f"**Proteína:** `{prot:.0f}g` (Equivalente a {prot/30:.1f} doses)")
+    st.markdown(f"**Carbo:** `{carbs:.0f}g` (Energia Primária)")
+    st.markdown(f"**Gordura:** `{fats:.0f}g` (Suporte Hormonal)")
+    st.info("💡 Estes valores foram injetados no teu plano de nutrição.")
+
 st.divider()
 st.markdown("### ✦ SYSTEM STATUS: OPERATIONAL")
-st.code(f"ENCRYPTION: ACTIVE | DATA_SYNC: OK | CLIENT_GOAL: {goal.upper()}", language="text")
+st.code(f"USER_WEIGHT: {weight}KG | TARGET: {target_cals:.0f}KCAL | GOAL: {goal.upper()}", language="text")
 
 
 
