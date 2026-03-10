@@ -114,3 +114,4 @@ st.divider()
 st.markdown("### ✦ MISSION EXECUTION PROTOCOL")
 st.code(f"PROTOCOLO: {goal} | HIDRATAÇÃO: {total_water:.1f}L | STATUS: OPTIMIZED", language="text")
 
+
